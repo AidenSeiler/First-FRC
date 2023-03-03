@@ -1,7 +1,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-//import edu.wpi.first.wpilibj.Timer; hehe
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.Timer; 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -16,20 +17,21 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Robot extends TimedRobot {
   PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
 
-  private Functions config = new Functions();
+  private Funk config = new Funk();
   private CANSparkMax leftMotor;
   private CANSparkMax rightMotor;
   private static final int leftMotorID = 1; 
   private static final int rightMotorID = 2;
   private DifferentialDrive robotDrive;
-  Joystick stick = new Joystick(0);
 
   @Override
 
   public void robotInit() {
-    leftMotor = new CANSparkMax(leftMotorID, MotorType.kBrushed);
-    rightMotor = new CANSparkMax(rightMotorID, MotorType.kBrushed);
-    robotDrive = new DifferentialDrive(leftMotor, rightMotor);
+   leftMotor = new CANSparkMax(leftMotorID, MotorType.kBrushed);
+   rightMotor = new CANSparkMax(rightMotorID, MotorType.kBrushed);
+   robotDrive = new DifferentialDrive(leftMotor, rightMotor);
+    config.controllerSet("Zorro");
+
   }@Override
 
   //public void autonomousInit() {}@Override
@@ -37,24 +39,25 @@ public class Robot extends TimedRobot {
 
 
   public void teleopInit() {}
-  double throttle;
-  double turn;
-  double totalCurrent;
+    double totalCurrent;
+   double turn;
+   double throttle;
 
   @Override
 
 
   public void teleopPeriodic() {
-  throttle = stick.getY();
-  turn = -config.turningCurve(stick.getZ());
+    turn = config.weightedTurn(config.controllerAxis("x2"));
+    throttle = config.controllerAxis("y1");
 
-  robotDrive.arcadeDrive(turn,throttle);
+    robotDrive.arcadeDrive(-turn,-  throttle);
 
-  SmartDashboard.putNumber("Turn Input",stick.getZ() );
-  SmartDashboard.putNumber("Turn Output", turn);
-  SmartDashboard.putNumber("Total Current", powerPanel.getTotalCurrent());
+    SmartDashboard.putNumber("Turn Input",config.controllerAxis("x2"));
+    SmartDashboard.putNumber("Throttle Input",config.controllerAxis("y1"));
+    SmartDashboard.putNumber("Turn Output",turn);
+    SmartDashboard.putNumber("Total Current", powerPanel.getTotalCurrent());
 
   }@Override
-  public void testInit() {}@Override
-  public void testPeriodic() {}
+    public void testInit() {}@Override
+    public void testPeriodic() {}
 }
