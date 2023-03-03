@@ -25,5 +25,8 @@
       }
     },
   ],
-  "java.test.defaultConfig": "WPIlibUnitTests"
+  "java.test.defaultConfig": "WPIlibUnitTests",
+  "editor.fontSize": 18,
+  "editor.fontFamily": "JetBrains Mono, , 'Courier New', monospace",
+  "workbench.colorTheme": "Default High Contrast"
 }
