@@ -4,15 +4,17 @@ import edu.wpi.first.wpilibj.TimedRobot;
 //import edu.wpi.first.wpilibj.Timer; hehe
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Joystick;
-//import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 
 
+
+
 public class Robot extends TimedRobot {
-  //private PowerDistributionPanel examplePDP = new PowerDistributionPanel(0);
+  PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
 
   private Functions config = new Functions();
   private CANSparkMax leftMotor;
@@ -37,6 +39,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {}
   double throttle;
   double turn;
+  double totalCurrent;
 
   @Override
 
@@ -49,6 +52,7 @@ public class Robot extends TimedRobot {
 
   SmartDashboard.putNumber("Turn Input",stick.getZ() );
   SmartDashboard.putNumber("Turn Output", turn);
+  SmartDashboard.putNumber("Total Current", powerPanel.getTotalCurrent());
 
   }@Override
   public void testInit() {}@Override
