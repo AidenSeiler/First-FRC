@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.cameraserver.CameraServer;
 
 
 
@@ -30,6 +31,7 @@ public class Robot extends TimedRobot {
    leftMotor = new CANSparkMax(leftMotorID, MotorType.kBrushed);
    rightMotor = new CANSparkMax(rightMotorID, MotorType.kBrushed);
    robotDrive = new DifferentialDrive(leftMotor, rightMotor);
+   CameraServer.startAutomaticCapture();
     config.controllerSet("Zorro");
 
   }@Override
