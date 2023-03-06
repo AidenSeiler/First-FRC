@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -20,23 +22,20 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 public class Robot extends TimedRobot {
   PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
   private Funk config = new Funk();
-  //private CANSparkMax leftMotor;
-  //private CANSparkMax rightMotor;
+  private WPI_VictorSPX motor1;
+  private WPI_VictorSPX motor2;
   private DifferentialDrive robotDrive;
   Spark blinkin = new Spark(0);
   private Compressor blowJob = new Compressor(1, PneumaticsModuleType.REVPH);
-  private speedcontroller leftMotor = new WPI_VictorSPX(0);
-  private speedcontroller rightMotor = new WPI_VictorSPX(0);
+
 
 
   @Override
 
   public void robotInit() {
-    private speedcontroller leftMotor = new WPI_VictorSPX(0);
-
-   leftMotor = new CANSparkMax(leftMotorID, MotorType.kBrushed);
-   rightMotor = new CANSparkMax(rightMotorID, MotorType.kBrushed);
-   robotDrive = new DifferentialDrive(leftMotor, rightMotor);
+    motor1 = new WPI_VictorSPX(0);
+    motor2 = new WPI_VictorSPX(0);
+   robotDrive = new DifferentialDrive(motor1, motor2);
    CameraServer.startAutomaticCapture();
   config.controllerSet("Zorro");
 
