@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
@@ -23,7 +24,9 @@ public class Robot extends TimedRobot {
   PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
   private Funk config = new Funk();
   private WPI_VictorSPX motor1;
-  private WPI_VictorSPX motor2;
+  private WPI_VictorSPX motor2; 
+  private WPI_VictorSPX motor3;
+  private WPI_VictorSPX motor4;
   private DifferentialDrive robotDrive;
   Spark blinkin = new Spark(0);
   private Compressor blowJob = new Compressor(1, PneumaticsModuleType.REVPH);
@@ -33,9 +36,14 @@ public class Robot extends TimedRobot {
   @Override
 
   public void robotInit() {
-    motor1 = new WPI_VictorSPX(0);
-    motor2 = new WPI_VictorSPX(0);
-   robotDrive = new DifferentialDrive(motor1, motor2);
+    motor1 = new WPI_VictorSPX(1);
+    motor2 = new WPI_VictorSPX(2);
+    motor3 = new WPI_VictorSPX(3);
+    motor4 = new WPI_VictorSPX(4);
+    MotorControllerGroup left = new MotorControllerGroup(motor1, motor2);
+    MotorControllerGroup right = new MotorControllerGroup(motor3, motor4);
+
+   robotDrive = new DifferentialDrive(left, right);
    CameraServer.startAutomaticCapture();
   config.controllerSet("Zorro");
 
@@ -54,9 +62,11 @@ public class Robot extends TimedRobot {
 
 
   public void teleopPeriodic() {
-    turn = config.weightedTurn(config.controllerAxis("x2"));
+   // turn = config.weightedTurn(config.controllerAxis("x2"));
+    turn = config.controllerAxis("x2");
+
     throttle = config.controllerAxis("y1");
-    robotDrive.arcadeDrive(-turn,-  throttle);
+    robotDrive.arcadeDrive(turn,-  throttle);
     blinkin.set(0.53);
     SmartDashboard.putNumber("Turn Input",config.controllerAxis("x2"));
     SmartDashboard.putNumber("Throttle Input",config.controllerAxis("y1"));
