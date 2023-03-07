@@ -2,9 +2,11 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.Timer; 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -31,8 +33,7 @@ public class Robot extends TimedRobot {
   private DifferentialDrive robotDrive;
   Spark blinkin = new Spark(0);
   private Compressor blowJob = new Compressor(1, PneumaticsModuleType.REVPH);
-
-
+  DoubleSolenoid testSolenoid = new DoubleSolenoid(9, PneumaticsModuleType.REVPH, 4, 5);  
 
   @Override
 
@@ -43,11 +44,11 @@ public class Robot extends TimedRobot {
     motor4 = new WPI_VictorSPX(4);
     MotorControllerGroup left = new MotorControllerGroup(motor1, motor2);
     MotorControllerGroup right = new MotorControllerGroup(motor3, motor4);
-
+    Joystick Joystick = new Joystick(1);
    robotDrive = new DifferentialDrive(motor1, motor2);
    CameraServer.startAutomaticCapture();
   config.controllerSet("Zorro");
-
+XboxController xbox = new XboxController(0);
   }@Override
 
   //public void autonomousInit() {}@Override
@@ -58,7 +59,7 @@ public class Robot extends TimedRobot {
    double totalCurrent;
    double turn;
    double throttle;
-
+   
   @Override
 
 
@@ -73,8 +74,20 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Throttle Input",config.controllerAxis("y1"));
     SmartDashboard.putNumber("Turn Output",turn);
     SmartDashboard.putNumber("Total Current", powerPanel.getTotalCurrent());
+    Value kOff;
+    testSolenoid.set(kOff);
+    Value kForward;
+    testSolenoid.set(kForward);
+    Value kReverse;
+    testSolenoid.set(kReverse);
 
+    testSolenoid.set(kReverse);
 
+XboxController xbox;
+if (xbox.getYButtonPressed()) {
+   testSolenoid.toggle();}
+   
+      
 
   }@Override
     public void testInit() {}@Override
