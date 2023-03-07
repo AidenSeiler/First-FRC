@@ -15,6 +15,9 @@ public class Funk {
 //DECLARE
 int controllerType;
 double output;
+int output2;
+boolean bool;
+
 
 private final GenericHID stick = new GenericHID(0);
 
@@ -42,11 +45,18 @@ private final GenericHID stick = new GenericHID(0);
             if(input == "y1"){output = stick.getRawAxis(1);}
             if(input == "x2"){output = stick.getRawAxis(2);}
             if(input == "pot1"){output = -stick.getRawAxis(3);}
+        } return output;
+             
+    }
 
-
-        }
-        return output;
-
+        public int controllerButton(String input){
+            if (controllerType == 0){
+                if(input == "left1"){bool = stick.getRawButton(6);}
+            }
+            if (controllerType == 1){}
+            if (bool = true){output2 =1;}
+            else output2 = 0;}
+            return output2;
     }
 
     
