@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -81,8 +80,8 @@ public class Robot extends TimedRobot {
 
     // if (Joystick.getRawAxis(pot1)) {
     //  solenoid.set(DoubleSolenoid.Value.kForward);
-     // } else if (Joystick.getRawAxis(pot1)){
-     // solenoid.set(DoubleSolenoid.Value.kReverse);
+    // } else if (Joystick.getRawAxis(pot1)){
+    // solenoid.set(DoubleSolenoid.Value.kReverse);
     // }
   }@Override
     public void testInit() {}@Override
