@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Timer; 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -22,15 +23,19 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 public class Robot extends TimedRobot {
   PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
+//Controller
   private Funk config = new Funk();
+//Motors
   private WPI_VictorSPX motor1;
   private WPI_VictorSPX motor2; 
   private WPI_VictorSPX motor3;
   private WPI_VictorSPX motor4;
   private DifferentialDrive robotDrive;
+//LEDs
   Spark blinkin = new Spark(0);
+ //Pneumatics
   private Compressor blowJob = new Compressor(1, PneumaticsModuleType.REVPH);
-
+  //private DoubleSolenoid solenoid = new doubleSolenoid(0, 1);
 
 
   @Override
@@ -73,6 +78,12 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Turn Output",turn);
     SmartDashboard.putNumber("Total Current", powerPanel.getTotalCurrent());
 
+
+    // if (Joystick.getRawAxis(pot1)) {
+    //  solenoid.set(DoubleSolenoid.Value.kForward);
+     // } else if (Joystick.getRawAxis(pot1)){
+     // solenoid.set(DoubleSolenoid.Value.kReverse);
+    // }
   }@Override
     public void testInit() {}@Override
     public void testPeriodic() {}
