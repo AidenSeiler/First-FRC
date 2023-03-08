@@ -15,8 +15,11 @@ public class Funk {
 //DECLARE
 int controllerType;
 double output;
+boolean output2 = false;
+int out = 0;
 
-private final GenericHID stick = new GenericHID(0);
+
+final GenericHID stick = new GenericHID(0);
 
 
     public void controllerSet(String cont){
@@ -48,8 +51,14 @@ private final GenericHID stick = new GenericHID(0);
         return output;
 
     }
-
-    
+    public int controllerButton(String input){
+        if (controllerType == 0){
+            if(input == "left1"){output2 = stick.getRawButtonPressed(6);}
+        }
+        if (output2 == true){out = 1;}
+        else{out = 0;}
+        return out;
+    }
 
     public double weightedTurn(double input){
         double weightedTurn = input*(1-(Math.abs(controllerAxis("y1")*0.5)));

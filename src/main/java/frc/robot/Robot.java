@@ -2,23 +2,23 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
+//mport edu.wpi.first.wpilibj.Timer;
+//import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.Compressor;
+//import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Joystick;
+//import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+//import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+//import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+//import com.revrobotics.CANSparkMax;
+//import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+//import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 
@@ -32,7 +32,7 @@ public class Robot extends TimedRobot {
   private WPI_VictorSPX motor4;
   private DifferentialDrive robotDrive;
   Spark blinkin = new Spark(0);
-  private Compressor blowJob = new Compressor(1, PneumaticsModuleType.REVPH);
+  //private Compressor blowJob = new Compressor(1, PneumaticsModuleType.REVPH);
   DoubleSolenoid testSolenoid = new DoubleSolenoid(9, PneumaticsModuleType.REVPH, 4, 5);  
 
   @Override
@@ -44,11 +44,9 @@ public class Robot extends TimedRobot {
     motor4 = new WPI_VictorSPX(4);
     MotorControllerGroup left = new MotorControllerGroup(motor1, motor2);
     MotorControllerGroup right = new MotorControllerGroup(motor3, motor4);
-    Joystick Joystick = new Joystick(1);
-   robotDrive = new DifferentialDrive(motor1, motor2);
+   robotDrive = new DifferentialDrive(left, right);
    CameraServer.startAutomaticCapture();
   config.controllerSet("Zorro");
-XboxController xbox = new XboxController(0);
   }@Override
 
   //public void autonomousInit() {}@Override
@@ -59,33 +57,33 @@ XboxController xbox = new XboxController(0);
    double totalCurrent;
    double turn;
    double throttle;
+   int button = 0;
    
   @Override
 
 
   public void teleopPeriodic() {
+if (config.stick.getRawButtonReleased(1) == true){
+ button = 1;
+}
+else{
+  button = 0;
+}
+
+
    // turn = config.weightedTurn(config.controllerAxis("x2"));
     turn = config.controllerAxis("x2");
-
     throttle = config.controllerAxis("y1");
     robotDrive.arcadeDrive(turn,-  throttle);
     blinkin.set(0.53);
     SmartDashboard.putNumber("Turn Input",config.controllerAxis("x2"));
+    SmartDashboard.putNumber("Butt 1",button);
+
     SmartDashboard.putNumber("Throttle Input",config.controllerAxis("y1"));
     SmartDashboard.putNumber("Turn Output",turn);
     SmartDashboard.putNumber("Total Current", powerPanel.getTotalCurrent());
-    Value kOff;
-    testSolenoid.set(kOff);
-    Value kForward;
-    testSolenoid.set(kForward);
-    Value kReverse;
-    testSolenoid.set(kReverse);
 
-    testSolenoid.set(kReverse);
 
-XboxController xbox;
-if (xbox.getYButtonPressed()) {
-   testSolenoid.toggle();}
    
       
 
