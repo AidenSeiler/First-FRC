@@ -63,12 +63,7 @@ public class Robot extends TimedRobot {
 
 
   public void teleopPeriodic() {
-if (config.stick.getRawButtonReleased(1) == true){
- button = 1;
-}
-else{
-  button = 0;
-}
+
 
 
    // turn = config.weightedTurn(config.controllerAxis("x2"));
@@ -76,12 +71,25 @@ else{
     throttle = config.controllerAxis("y1");
     robotDrive.arcadeDrive(turn,-  throttle);
     blinkin.set(0.53);
-    SmartDashboard.putNumber("Turn Input",config.controllerAxis("x2"));
-    SmartDashboard.putNumber("Butt 1",button);
 
-    SmartDashboard.putNumber("Throttle Input",config.controllerAxis("y1"));
+
+
+    SmartDashboard.putNumber("Turn Input",config.controllerAxis("x2"));
     SmartDashboard.putNumber("Turn Output",turn);
+    SmartDashboard.putNumber("Throttle Input",config.controllerAxis("y1"));
+
     SmartDashboard.putNumber("Total Current", powerPanel.getTotalCurrent());
+    SmartDashboard.putNumber("pot1",config.controllerAxis("pot1"));
+    SmartDashboard.putNumber("pot2",config.controllerAxis("pot2"));
+
+    SmartDashboard.putNumber("threeWay1",config.controllerButton("threeWay1"));
+    SmartDashboard.putNumber("threeWay2",config.controllerButton("threeWay2"));
+    SmartDashboard.putNumber("twoWay1",config.controllerButton("twoWay1"));
+    SmartDashboard.putNumber("twoWay2",config.controllerButton("twoWay2"));
+    SmartDashboard.putNumber("topB1",config.controllerButton("topB1"));
+    SmartDashboard.putNumber("topB2",config.controllerButton("topB2"));
+    SmartDashboard.putNumber("backB1",config.controllerButton("backB1"));
+    SmartDashboard.putNumber("backB2",config.controllerButton("backB2"));
 
 
    

@@ -15,8 +15,8 @@ public class Funk {
 //DECLARE
 int controllerType;
 double output;
-boolean output2 = false;
-int out = 0;
+int output2;
+boolean out;
 
 
 final GenericHID stick = new GenericHID(0);
@@ -45,19 +45,34 @@ final GenericHID stick = new GenericHID(0);
             if(input == "y1"){output = stick.getRawAxis(1);}
             if(input == "x2"){output = stick.getRawAxis(2);}
             if(input == "pot1"){output = -stick.getRawAxis(3);}
-
-
         }
         return output;
-
     }
+
+
     public int controllerButton(String input){
         if (controllerType == 0){
-            if(input == "left1"){output2 = stick.getRawButtonPressed(6);}
+            if((input == "threeWay1") && stick.getRawAxis(6) == 1){output2 = 0;}
+            if((input == "threeWay1") && stick.getRawAxis(6) == 0){output2 = 1;}
+            if((input == "threeWay1") && stick.getRawAxis(6) == -1){output2 = 2;}
+            if((input == "threeWay2") && stick.getRawButton(1)){output2 = 0;}
+            if((input == "threeWay2") && stick.getRawButton(2)){output2 = 1;}
+            if((input == "threeWay2") && stick.getRawButton(3)){output2 = 2;}
+            if((input == "twoWay1") && stick.getRawButton(4)){output2 = 1;}
+            if((input == "twoWay1") && !stick.getRawButton(4)){output2 = 0;}
+            if((input == "twoWay2") && stick.getRawButton(5)){output2 = 1;}
+            if((input == "twoWay2") && !stick.getRawButton(5)){output2 = 0;}
+            if((input == "topB1") && stick.getRawButton(6)){output2 = 1;}
+            if((input == "topB1") && !stick.getRawButton(6)){output2 = 0;}
+            if((input == "topB2") && stick.getRawButton(7)){output2 = 1;}
+            if((input == "topB2") && !stick.getRawButton(7)){output2 = 0;}   
+            if((input == "backB1") && stick.getRawButton(8)){output2 = 1;}
+            if((input == "backB1") && !stick.getRawButton(8)){output2 = 0;}  
+            if((input == "backB2") && stick.getRawButton(9)){output2 = 1;}
+            if((input == "backB2") && !stick.getRawButton(9)){output2 = 0;}   
         }
-        if (output2 == true){out = 1;}
-        else{out = 0;}
-        return out;
+       
+        return output2;
     }
 
     public double weightedTurn(double input){
