@@ -74,12 +74,8 @@ public class Robot extends TimedRobot {
 
     if (config.controllerButton("twoWay1") == 0){
       testSolenoid.set(DoubleSolenoid.Value.kForward);}
-      else if (config.controllerButton("twoWay1") == 1){
-      testSolenoid.set(DoubleSolenoid.Value.kReverse);}
-      else {
-      testSolenoid.set(DoubleSolenoid.Value.kOff);
-      }
-    
+      else{testSolenoid.set(DoubleSolenoid.Value.kReverse);}
+     
 
 
 
