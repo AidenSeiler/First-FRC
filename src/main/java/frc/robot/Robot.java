@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
   private DifferentialDrive robotDrive;
   Spark blinkin = new Spark(0);
   //private Compressor blowJob = new Compressor(1, PneumaticsModuleType.REVPH);
-  DoubleSolenoid testSolenoid = new DoubleSolenoid(9, PneumaticsModuleType.REVPH, 4, 5);  
+  DoubleSolenoid testSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.REVPH, 0, 1);  
 
   @Override
 
@@ -71,6 +71,15 @@ public class Robot extends TimedRobot {
     throttle = config.controllerAxis("y1");
     robotDrive.arcadeDrive(turn,-  throttle);
     blinkin.set(0.53);
+
+    if (config.controllerButton("twoWay1") == 0){
+      testSolenoid.set(DoubleSolenoid.Value.kForward);}
+      else if (config.controllerButton("twoWay1") == 1){
+      testSolenoid.set(DoubleSolenoid.Value.kReverse);}
+      else {
+      testSolenoid.set(DoubleSolenoid.Value.kOff);
+      }
+    
 
 
 
