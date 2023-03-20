@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 //mport edu.wpi.first.wpilibj.Timer;
 //import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-//import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -32,7 +32,7 @@ public class Robot extends TimedRobot {
   private WPI_VictorSPX motor4;
   private DifferentialDrive robotDrive;
   Spark blinkin = new Spark(0);
-  //private Compressor blowJob = new Compressor(1, PneumaticsModuleType.REVPH);
+  Compressor comp = new Compressor(1, PneumaticsModuleType.REVPH);
   DoubleSolenoid testSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.REVPH, 0, 1);  
 
   @Override
@@ -58,11 +58,11 @@ public class Robot extends TimedRobot {
    double turn;
    double throttle;
    int button = 0;
-   
   @Override
 
 
   public void teleopPeriodic() {
+    //comp.stop();
 
 
 
@@ -76,8 +76,10 @@ public class Robot extends TimedRobot {
       testSolenoid.set(DoubleSolenoid.Value.kForward);}
       else{testSolenoid.set(DoubleSolenoid.Value.kReverse);}
      
-
-
+    // if(config.controllerButton("twoWay2")==0){
+    //   comp.start();
+    // }
+    // else{comp.stop();}
 
     SmartDashboard.putNumber("Turn Input",config.controllerAxis("x2"));
     SmartDashboard.putNumber("Turn Output",turn);
