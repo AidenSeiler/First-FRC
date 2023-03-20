@@ -46,7 +46,7 @@ public class Robot extends TimedRobot {
     MotorControllerGroup right = new MotorControllerGroup(motor3, motor4);
    robotDrive = new DifferentialDrive(left, right);
    CameraServer.startAutomaticCapture();
-  config.controllerSet("Zorro");
+  config.controllerSet("Joystick");
   }@Override
 
   //public void autonomousInit() {}@Override
@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
 
 
   public void teleopPeriodic() {
-    //comp.stop();
+    //comp.disable();
 
 
 
@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
     robotDrive.arcadeDrive(turn,-  throttle);
     blinkin.set(0.53);
 
-    if (config.controllerButton("twoWay1") == 0){
+    if (config.controllerButton("twoWay1") == 1){
       testSolenoid.set(DoubleSolenoid.Value.kForward);}
       else{testSolenoid.set(DoubleSolenoid.Value.kReverse);}
      
