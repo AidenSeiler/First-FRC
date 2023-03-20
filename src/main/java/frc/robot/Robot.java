@@ -46,7 +46,7 @@ public class Robot extends TimedRobot {
     MotorControllerGroup right = new MotorControllerGroup(motor3, motor4);
    robotDrive = new DifferentialDrive(left, right);
    CameraServer.startAutomaticCapture();
-  config.controllerSet("Joystick");
+  config.controllerSet("Zorro");
   }@Override
 
   //public void autonomousInit() {}@Override
@@ -58,17 +58,18 @@ public class Robot extends TimedRobot {
    double turn;
    double throttle;
    int button = 0;
+   double power;
   @Override
 
 
   public void teleopPeriodic() {
-    //comp.disable();
+   // comp.disable();
 
 
 
    // turn = config.weightedTurn(config.controllerAxis("x2"));
-    turn = config.controllerAxis("x2");
-    throttle = config.controllerAxis("y1");
+    turn = power * config.controllerAxis("x2");
+    throttle = power * config.controllerAxis("y2");
     robotDrive.arcadeDrive(turn,-  throttle);
     blinkin.set(0.53);
 
@@ -76,14 +77,15 @@ public class Robot extends TimedRobot {
       testSolenoid.set(DoubleSolenoid.Value.kForward);}
       else{testSolenoid.set(DoubleSolenoid.Value.kReverse);}
      
-    // if(config.controllerButton("twoWay2")==0){
-    //   comp.start();
-    // }
-    // else{comp.stop();}
+   if(powerPanel.getTotalCurrent()>100){
+    power -= 0.03;
+   }
+   else if (power <1){power += 0.01;}
 
     SmartDashboard.putNumber("Turn Input",config.controllerAxis("x2"));
     SmartDashboard.putNumber("Turn Output",turn);
     SmartDashboard.putNumber("Throttle Input",config.controllerAxis("y1"));
+    SmartDashboard.putNumber("Power",power);
 
     SmartDashboard.putNumber("Total Current", powerPanel.getTotalCurrent());
     SmartDashboard.putNumber("pot1",config.controllerAxis("pot1"));

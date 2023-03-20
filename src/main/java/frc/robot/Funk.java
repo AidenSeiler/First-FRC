@@ -46,6 +46,7 @@ final GenericHID stick = new GenericHID(0);
             if(input == "x2"){output = stick.getRawAxis(2);}
             if(input == "pot1"){output = -stick.getRawAxis(3);}
         }
+        
         return output;
     }
 
