@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 //mport edu.wpi.first.wpilibj.Timer;
 //import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.Joystick;
@@ -63,9 +64,6 @@ public class Robot extends TimedRobot {
 
 
   public void teleopPeriodic() {
-   // comp.disable();
-
-
 
    // turn = config.weightedTurn(config.controllerAxis("x2"));
     turn = power * config.controllerAxis("x2");
@@ -79,11 +77,10 @@ public class Robot extends TimedRobot {
     
      if (config.controllerButton("twoWay2") == 1){
       comp.disable();} 
-      else{comp.isEnabled();}
+      else{comp.enableDigital();}
 
-   if(powerPanel.getTotalCurrent()>150){
-    power -= 0.03;
-   }
+   if(powerPanel.getTotalCurrent()>100){
+    power -= 0.03;}
    while (power <1){power += 0.01;}
 
     SmartDashboard.putNumber("Turn Input",config.controllerAxis("x2"));
