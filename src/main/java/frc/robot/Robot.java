@@ -18,6 +18,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 //import com.revrobotics.CANSparkMax;
 //import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 //import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 
 public class Robot extends TimedRobot {
+  PIDController currentPID = new PIDController(1, 0, 0);
   PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
   private Funk config = new Funk();
   private WPI_VictorSPX motor1;
@@ -60,24 +62,28 @@ public class Robot extends TimedRobot {
    double throttle;
    int button = 0;
    double power;
+   double maxCurrent = 120;
+   double pidOutput;
   @Override
 
 
   public void teleopPeriodic() {
-
+comp.disable();
    // turn = config.weightedTurn(config.controllerAxis("x2"));
     turn = power * config.controllerAxis("x2");
     throttle = power * config.controllerAxis("y2");
     robotDrive.arcadeDrive(turn,-  throttle);
     blinkin.set(0.53);
+    totalCurrent = powerPanel.getTotalCurrent();
+     pidOutput = currentPID.calculate(powerPanel.getTotalCurrent(), maxCurrent);
 
     if (config.controllerButton("twoWay1") == 1){
       testSolenoid.set(DoubleSolenoid.Value.kForward);}
       else{testSolenoid.set(DoubleSolenoid.Value.kReverse);}
     
-     if (config.controllerButton("twoWay2") == 1){
-      comp.disable();} 
-      else{comp.enableDigital();}
+    //  if (config.controllerButton("twoWay2") == 1){
+    //   comp.disable();} 
+    //   else{comp.enableDigital();}
 
    if(powerPanel.getTotalCurrent()>100){
     power -= 0.03;}
@@ -87,6 +93,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Turn Output",turn);
     SmartDashboard.putNumber("Throttle Input",config.controllerAxis("y1"));
     SmartDashboard.putNumber("Power",power);
+    SmartDashboard.putNumber("Current PID",pidOutput);
+
 
     SmartDashboard.putNumber("Total Current", powerPanel.getTotalCurrent());
     SmartDashboard.putNumber("pot1",config.controllerAxis("pot1"));
