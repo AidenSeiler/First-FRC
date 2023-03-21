@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 //mport edu.wpi.first.wpilibj.Timer;
 //import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+//import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.Joystick;
@@ -68,22 +68,21 @@ public class Robot extends TimedRobot {
 
 
   public void teleopPeriodic() {
-comp.disable();
    // turn = config.weightedTurn(config.controllerAxis("x2"));
     turn = power * config.controllerAxis("x2");
     throttle = power * config.controllerAxis("y2");
     robotDrive.arcadeDrive(turn,-  throttle);
     blinkin.set(0.53);
-    totalCurrent = powerPanel.getTotalCurrent();
-     pidOutput = currentPID.calculate(powerPanel.getTotalCurrent(), maxCurrent);
+   totalCurrent = powerPanel.getTotalCurrent();
+     pidOutput = currentPID.calculate(totalCurrent, maxCurrent);
 
     if (config.controllerButton("twoWay1") == 1){
       testSolenoid.set(DoubleSolenoid.Value.kForward);}
       else{testSolenoid.set(DoubleSolenoid.Value.kReverse);}
     
-    //  if (config.controllerButton("twoWay2") == 1){
-    //   comp.disable();} 
-    //   else{comp.enableDigital();}
+     if (config.controllerButton("twoWay2") == 1){
+      comp.disable();} 
+      else{comp.enableDigital();}
 
    if(powerPanel.getTotalCurrent()>100){
     power -= 0.03;}
@@ -96,7 +95,7 @@ comp.disable();
     SmartDashboard.putNumber("Current PID",pidOutput);
 
 
-    SmartDashboard.putNumber("Total Current", powerPanel.getTotalCurrent());
+    SmartDashboard.putNumber("Total Current", totalCurrent);
     SmartDashboard.putNumber("pot1",config.controllerAxis("pot1"));
     SmartDashboard.putNumber("pot2",config.controllerAxis("pot2"));
 
