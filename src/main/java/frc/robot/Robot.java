@@ -80,10 +80,11 @@ public class Robot extends TimedRobot {
      if (config.controllerButton("twoWay2") == 1){
       comp.disable();} 
       else{comp.isEnabled();}
-   if(powerPanel.getTotalCurrent()>100){
+
+   if(powerPanel.getTotalCurrent()>150){
     power -= 0.03;
    }
-   else if (power <1){power += 0.01;}
+   while (power <1){power += 0.01;}
 
     SmartDashboard.putNumber("Turn Input",config.controllerAxis("x2"));
     SmartDashboard.putNumber("Turn Output",turn);
