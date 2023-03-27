@@ -17,18 +17,26 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 //import com.revrobotics.CANSparkMax;
 //import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.cameraserver.CameraServer;
+//import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
+//import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 //import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
-
+// import edu.wpi.first.cscore.CvSink;
+// import edu.wpi.first.cscore.CvSource;
+// import edu.wpi.first.cscore.UsbCamera;
+// import org.opencv.core.Mat;
+// import org.opencv.core.Point;
+// import org.opencv.core.Scalar;
+// import org.opencv.imgproc.Imgproc;
 
 
 public class Robot extends TimedRobot {
   PIDController currentPID = new PIDController(1, 0, 0);
   PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
   private Funk config = new Funk();
+
   private WPI_VictorSPX motor1;
   private WPI_VictorSPX motor2; 
   private WPI_VictorSPX motor3;
@@ -37,7 +45,7 @@ public class Robot extends TimedRobot {
   Spark blinkin = new Spark(0);
   Compressor comp = new Compressor(1, PneumaticsModuleType.REVPH);
   DoubleSolenoid testSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.REVPH, 0, 1);  
-
+ 
   @Override
 
   public void robotInit() {
@@ -48,8 +56,9 @@ public class Robot extends TimedRobot {
     MotorControllerGroup left = new MotorControllerGroup(motor1, motor2);
     MotorControllerGroup right = new MotorControllerGroup(motor3, motor4);
    robotDrive = new DifferentialDrive(left, right);
-   CameraServer.startAutomaticCapture();
   config.controllerSet("Zorro");
+
+
   }@Override
 
   //public void autonomousInit() {}@Override
@@ -107,7 +116,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("topB2",config.controllerButton("topB2"));
     SmartDashboard.putNumber("backB1",config.controllerButton("backB1"));
     SmartDashboard.putNumber("backB2",config.controllerButton("backB2"));
-
+    
+    
 
    
       
