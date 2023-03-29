@@ -1,0 +1,21 @@
+{
+  "NetworkTables Settings": {
+    "listenAddress": "10.12.34.1",
+    "mode": "Client (NT4)",
+    "serverTeam": "1234"
+  },
+  "Persistent Values": {
+    "open": false
+  },
+  "Retained Values": {
+    "open": false
+  },
+  "Server": {
+    "open": true
+  },
+  "transitory": {
+    "SmartDashboard": {
+      "open": true
+    }
+  }
+}

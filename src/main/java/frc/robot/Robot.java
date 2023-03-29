@@ -12,52 +12,63 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+//import org.opencv.core.Mat;
+//import org.opencv.core.Point;
+//import org.opencv.core.Scalar;
+//import org.opencv.imgproc.Imgproc;
+
 //import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 //import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-//import com.revrobotics.CANSparkMax;
-//import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-//import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.controller.PIDController;
-//import edu.wpi.first.vision.VisionThread;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.networktables.DoubleArraySubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+//import edu.wpi.first.cscore.CvSink;
+//import edu.wpi.first.cscore.CvSource;
+//import edu.wpi.first.cscore.UsbCamera;
+//import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 //import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
-// import edu.wpi.first.cscore.CvSink;
-// import edu.wpi.first.cscore.CvSource;
-// import edu.wpi.first.cscore.UsbCamera;
-// import org.opencv.core.Mat;
-// import org.opencv.core.Point;
-// import org.opencv.core.Scalar;
-// import org.opencv.imgproc.Imgproc;
+
 
 
 public class Robot extends TimedRobot {
-  PIDController currentPID = new PIDController(1, 0, 0);
   PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
   private Funk config = new Funk();
+  
 
-  private WPI_VictorSPX motor1;
-  private WPI_VictorSPX motor2; 
-  private WPI_VictorSPX motor3;
-  private WPI_VictorSPX motor4;
-  private DifferentialDrive robotDrive;
   Spark blinkin = new Spark(0);
   Compressor comp = new Compressor(1, PneumaticsModuleType.REVPH);
   DoubleSolenoid testSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.REVPH, 0, 1);  
- 
+
+  double totalCurrent;
+  double turn;
+  double throttle;
+  int button = 0;
+  double power = 1;
+  double maxCurrent = 100;
+  CANSparkMax spinner1 = new CANSparkMax(1, MotorType.kBrushless);
+  CANSparkMax spinner2 = new CANSparkMax(2, MotorType.kBrushless);
+  WPI_VictorSPX motor1 = new WPI_VictorSPX(1);
+  WPI_VictorSPX motor2 = new WPI_VictorSPX(2);
+  WPI_VictorSPX motor3 = new WPI_VictorSPX(3);
+  WPI_VictorSPX motor4 = new WPI_VictorSPX(4);
+  MotorControllerGroup left = new MotorControllerGroup(motor1, motor2);
+  MotorControllerGroup right = new MotorControllerGroup(motor3, motor4);
+  DifferentialDrive robotDrive = new DifferentialDrive(left, right);
+UsbCamera camera;
   @Override
 
   public void robotInit() {
-    motor1 = new WPI_VictorSPX(1);
-    motor2 = new WPI_VictorSPX(2);
-    motor3 = new WPI_VictorSPX(3);
-    motor4 = new WPI_VictorSPX(4);
-    MotorControllerGroup left = new MotorControllerGroup(motor1, motor2);
-    MotorControllerGroup right = new MotorControllerGroup(motor3, motor4);
-   robotDrive = new DifferentialDrive(left, right);
-  config.controllerSet("Zorro");
-
+    camera = CameraServer.startAutomaticCapture();
+    camera.setResolution(320,240);
 
   }@Override
 
@@ -65,44 +76,58 @@ public class Robot extends TimedRobot {
   //public void autonomousPeriodic() {}@Override
 
 
-  public void teleopInit() {}
-   double totalCurrent;
-   double turn;
-   double throttle;
-   int button = 0;
-   double power;
-   double maxCurrent = 120;
-   double pidOutput;
+  public void teleopInit() {
+    
+
+    config.controllerSet("Zorro");
+          
+  
+  }
+   
+  
+
+
+  
+  
   @Override
 
 
   public void teleopPeriodic() {
+    comp.disable();
+
+
    // turn = config.weightedTurn(config.controllerAxis("x2"));
     turn = power * config.controllerAxis("x2");
     throttle = power * config.controllerAxis("y2");
     robotDrive.arcadeDrive(turn,-  throttle);
     blinkin.set(0.53);
-   totalCurrent = powerPanel.getTotalCurrent();
-     pidOutput = currentPID.calculate(totalCurrent, maxCurrent);
-
+    totalCurrent = powerPanel.getTotalCurrent();
+    if(config.controllerButton("topB1") == 1){
+    spinner1.set(config.controllerAxis("pot1"));
+    spinner2.set(-config.controllerAxis("pot2"));
+  }
+  else{
+    spinner1.set(0);
+    spinner2.set(0);
+  }
     if (config.controllerButton("twoWay1") == 1){
-      testSolenoid.set(DoubleSolenoid.Value.kForward);}
-      else{testSolenoid.set(DoubleSolenoid.Value.kReverse);}
+      testSolenoid.set(DoubleSolenoid.Value.kForward);
+    }
+      else{
+        testSolenoid.set(DoubleSolenoid.Value.kReverse);
+      }
     
-     if (config.controllerButton("twoWay2") == 1){
-      comp.disable();} 
-      else{comp.enableDigital();}
+    //  if (config.controllerButton("twoWay2") == 1){comp.disable();} 
+    //   else{comp.enableDigital();}
 
-   if(powerPanel.getTotalCurrent()>100){
-    power -= 0.03;}
-   while (power <1){power += 0.01;}
+
+   //if(totalCurrent >80){power -= 0.0p5;}
+   //if (power <1){power += 0.005;}
 
     SmartDashboard.putNumber("Turn Input",config.controllerAxis("x2"));
     SmartDashboard.putNumber("Turn Output",turn);
     SmartDashboard.putNumber("Throttle Input",config.controllerAxis("y1"));
     SmartDashboard.putNumber("Power",power);
-    SmartDashboard.putNumber("Current PID",pidOutput);
-
 
     SmartDashboard.putNumber("Total Current", totalCurrent);
     SmartDashboard.putNumber("pot1",config.controllerAxis("pot1"));
@@ -116,8 +141,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("topB2",config.controllerButton("topB2"));
     SmartDashboard.putNumber("backB1",config.controllerButton("backB1"));
     SmartDashboard.putNumber("backB2",config.controllerButton("backB2"));
-    
-    
+
 
    
       
