@@ -30,13 +30,14 @@ import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 public class Robot extends TimedRobot {
   Funk config = new Funk();
-
+LinearFilter filter = LinearFilter.singlePoleIIR(0.1, 0.02);
 //CAN DEVICES
   PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
   Compressor comp = new Compressor(1, PneumaticsModuleType.REVPH);
@@ -101,7 +102,7 @@ public class Robot extends TimedRobot {
     double x = xData.getDouble(0.0);
     double y = yData.getDouble(0.0);
 
-    xOffset = (x-(imageWidth/2))/(imageWidth/2);
+    xOffset = filter.calculate((x-(imageWidth/2))/(imageWidth/2));
     yOffset = (y-(imageHeight/2))/(imageHeight/2);
     xPIDout = MathUtil.clamp(pid.calculate(xOffset, 0), -0.1, 0.1);
 
