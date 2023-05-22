@@ -41,9 +41,9 @@ final GenericHID stick = new GenericHID(0);
             if(input == "pot2"){output = stick.getRawAxis(5);}
         }
         if (controllerType == 1){
-            if(input == "x1"){output = stick.getRawAxis(0);}
-            if(input == "y1"){output = -stick.getRawAxis(1);}
-            if(input == "x2"){output = stick.getRawAxis(2);}
+            if(input == "x2"){output = stick.getRawAxis(0);}
+            if(input == "y2"){output = -stick.getRawAxis(1);}
+            if(input == "x1"){output = stick.getRawAxis(2);}
             if(input == "pot1"){output = -stick.getRawAxis(3);}
         }
         
@@ -73,9 +73,16 @@ final GenericHID stick = new GenericHID(0);
             if((input == "backB2") && !stick.getRawButton(9)){output2 = 0;}   
         }
         if(controllerType ==1){
-            if((input == "twoWay1") && stick.getRawButton(1)){output2 = 1;}
-            if((input == "twoWay1") && !stick.getRawButton(1)){output2 = 0;}
-
+            if((input == "threeWay1") && stick.getRawButton(2)){output2 = 1;}
+            if((input == "threeWay1") && !stick.getRawButton(2)){output2 = 0;}
+            if((input == "twoWay1") && stick.getRawButton(1)){output2 = 0;}
+            if((input == "twoWay1") && !stick.getRawButton(1)){output2 = 1;}
+            if((input == "topB2") && stick.getRawButton(2)){output2 = 1;}
+            if((input == "topB2") && !stick.getRawButton(2)){output2 = 0;}
+            if((input == "twoWay2") && stick.getRawButton(3)){output2 = 0;}
+            if((input == "twoWay2") && !stick.getRawButton(3)){output2 = 1;}
+            if((input == "backB1") && stick.getRawButton(5)){output2 = 1;}
+            if((input == "backB1") && !stick.getRawButton(5)){output2 = 0;} 
         }
        
         return output2;
