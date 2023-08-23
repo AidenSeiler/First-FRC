@@ -19,6 +19,7 @@ int output2;
 boolean out;
 
 
+
 final GenericHID stick = new GenericHID(0);
 
 
@@ -31,6 +32,17 @@ final GenericHID stick = new GenericHID(0);
         }
     }
 
+    public double deadzone(double input){
+        if (Math.abs(input) > 0.0){
+            return input;
+        }
+        else{
+        return 0;
+        }
+    }
+
+
+
     public double controllerAxis(String input){
         if (controllerType == 0){
             if(input == "x1"){output = stick.getRawAxis(0);}
@@ -41,13 +53,14 @@ final GenericHID stick = new GenericHID(0);
             if(input == "pot2"){output = stick.getRawAxis(5);}
         }
         if (controllerType == 1){
-            if(input == "x2"){output = stick.getRawAxis(0);}
+            if(input == "x2"){output = stick.getRawAxis(2);}
             if(input == "y2"){output = -stick.getRawAxis(1);}
-            if(input == "x1"){output = stick.getRawAxis(2);}
+            if(input == "x1"){output = stick.getRawAxis(0);}
             if(input == "pot1"){output = -stick.getRawAxis(3);}
         }
         
         return output;
+      
     }
 
 

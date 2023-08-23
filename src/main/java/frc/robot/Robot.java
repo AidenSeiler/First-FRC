@@ -11,7 +11,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import com.revrobotics.CANSparkMax;
 //import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.cameraserver.CameraServer;
-
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.UsbCamera;
 
 import edu.wpi.first.vision.VisionThread;
@@ -24,11 +25,13 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 public class Robot extends TimedRobot {
-
+  Thread m_visionThread;
 
 
  
@@ -44,13 +47,10 @@ public class Robot extends TimedRobot {
 
 //MOTORS
   CANSparkMax right1 = new CANSparkMax(1, MotorType.kBrushless);
-  CANSparkMax left1 = new CANSparkMax(2, MotorType.kBrushless);
-  CANSparkMax tilt = new CANSparkMax(3, MotorType.kBrushless);
+  CANSparkMax left1 = new CANSparkMax(2 , MotorType.kBrushless);
 
-  WPI_VictorSPX right2 = new WPI_VictorSPX(10);
+  WPI_VictorSPX right2 = new WPI_VictorSPX(1);
   WPI_VictorSPX left2 = new WPI_VictorSPX(2);
-  WPI_VictorSPX spinner1 = new WPI_VictorSPX(1);
-  CANSparkMax spinner2 = new CANSparkMax(5, MotorType.kBrushless);
 
   SparkMaxPIDController leftDrivePID;
   RelativeEncoder leftEncoder;
@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
   int imageHeight = 480;
   int imageWidth = 640;  
   double xOffset;
-  double yOffset;
+  double xRange;
 
   //PID
   PIDController pid = new PIDController(1, 0, 0);
@@ -84,10 +84,12 @@ public class Robot extends TimedRobot {
   LinearFilter xfilter = LinearFilter.singlePoleIIR(0.1, 0.02);
   LinearFilter yfilter = LinearFilter.singlePoleIIR(0.1, 0.02);
 
-  double centerY;
-double xMod;
-double yMod;
-double centerX;
+  double rawObjectY;
+double xFinal;
+double yFinal;
+double rawObjectX;
+
+
   @Override
   public void robotInit() {
 
@@ -98,23 +100,45 @@ double centerX;
       if (!pipeline.filterContoursOutput().isEmpty()) {
           Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
           synchronized (imgLock) {
-               centerX = r.x + (r.width / 2);
-               centerY = r.y + (r.height / 2);
+               rawObjectX = r.x + (r.width / 2);
+               rawObjectY = r.y + (r.height / 2);
 
           }
       }
   });
   visionThread.start();
 
+  m_visionThread =
+  new Thread(
+      () -> {
+        CvSink cvSink = CameraServer.getVideo();
+        CvSource outputStream = CameraServer.putVideo("Rectangle", 640, 480);
+        Mat mat = new Mat();
+        while (!Thread.interrupted()) {
+          if (cvSink.grabFrame(mat) == 0) {
+            outputStream.notifyError(cvSink.getError());
+            continue;
+          }
+          Imgproc.circle(
+              mat, new Point(rawObjectX, rawObjectY), 10, new Scalar(0, 255, 0), 5);
 
+          // Give the output stream a new image to display
+
+          outputStream.putFrame(mat);
+
+        }
+
+      });
+
+m_visionThread.setDaemon(true);
+
+m_visionThread.start();
 
 //PID INIT
     leftDrivePID = left1.getPIDController();
     leftEncoder = left1.getEncoder();
     rightDrivePID = right1.getPIDController();
     rightEncoder = right1.getEncoder();
-    tiltPID = tilt.getPIDController();
-    tiltEncoder = tilt.getEncoder();
 
    // DRIVE PID coefficients
     kP = 0.00006; 
@@ -124,7 +148,7 @@ double centerX;
     kFF = 0.000015; 
     kMaxOutput = 1; 
     kMinOutput = -1;
-    maxRPM = 5100;
+    maxRPM = 6000;
 
     leftDrivePID.setP(kP);
     leftDrivePID.setI(kI);
@@ -133,12 +157,6 @@ double centerX;
     leftDrivePID.setFF(kFF);
     leftDrivePID.setOutputRange(kMinOutput, kMaxOutput);
 
-    tiltPID.setP(0.5);
-    tiltPID.setI(kI);
-    tiltPID.setD(kD);
-    tiltPID.setIZone(kIz);
-    tiltPID.setFF(0.0015);
-    tiltPID.setOutputRange(kMinOutput, kMaxOutput);
 
     rightDrivePID.setP(kP);
     rightDrivePID.setI(kI);
@@ -157,7 +175,7 @@ double centerX;
 
   public void teleopInit() {
     //CAMERA SETTINGS
-
+   
 
     //CONTROLLER SELECTION
     config.controllerSet("Zorro");
@@ -165,38 +183,18 @@ double centerX;
 
 
   public void teleopPeriodic() {
-
+    xOffset = (rawObjectX - (imageWidth/2))/(imageWidth/2);
     totalCurrent = powerPanel.getTotalCurrent();
 
-    //AUTOAIM
-    xOffset = xfilter.calculate(centerX-(imageWidth/2))/(imageWidth/2);
-    yOffset = -yfilter.calculate(centerY-(imageHeight/2))/(imageHeight/2);
 
 
-    if(config.controllerButton("backB1")==1){
-      if(xOffset > 0.05){xMod = 0.155;}
-      else if(xOffset < -0.05){xMod = -0.155;}
-      else{xMod = 0;}
-      if(yOffset > 0.04){yMod += 0.003;}
-     else if(yOffset < -0.04){yMod -= 0.003;}
-     leftDrivePID.setP(0.0001);
-     rightDrivePID.setFF(kFF);
-     rightDrivePID.setP(0.0001);
-     rightDrivePID.setFF(kFF);
+if(config.controllerButton("topB2") == 1){
+ if(true){
 
-    }
-    else{
-      xMod = 0;
-      yMod = 0;
-      leftDrivePID.setP(kP);
-      rightDrivePID.setFF(kFF);
-      rightDrivePID.setP(kP);
-      rightDrivePID.setFF(kFF);
-    }
-  
-  
+ }
+}
     //DROBING
-    turn = config.controllerAxis("x2")+xMod;
+    turn = config.deadzone(config.controllerAxis("x1"))+xFinal;
     throttle = -config.controllerAxis("y2");
     double setPointLeft = (-throttle+turn)*maxRPM;
    leftDrivePID.setReference(setPointLeft, CANSparkMax.ControlType.kVelocity);
@@ -205,25 +203,6 @@ double centerX;
     //left2.set(-throttle+turn);
     //right2.set(throttle+turn);
 
-
-//AIM UP/DOWN
-    double setPointTilt = config.controllerAxis("y1")+yMod-0.5;
-    if(config.controllerButton("threeWay1")==1){
-   tiltPID.setReference(setPointTilt, CANSparkMax.ControlType.kPosition);
-    }
-    else{tilt.set(0);}
-//SPINNER ENABLE AND DISABLE/SPEED CONTROL
-    if(config.controllerButton("topB2") == 1){
-      spinner1.set(config.controllerAxis("pot1"));
-      spinner2.set(-config.controllerAxis("pot1"));
-
-    }
-    else{
-      spinner1.set(0);
-      spinner2.set(0);
-
-    }
-   // spinners.set(1);
 //SOLENOID ACTUATION
     if (config.controllerButton("twoWay1") == 1){
       testSolenoid.set(DoubleSolenoid.Value.kForward);
@@ -247,13 +226,9 @@ double centerX;
     SmartDashboard.putNumber("pot1",config.controllerAxis("pot1"));
     SmartDashboard.putNumber("pot2",config.controllerAxis("pot2"));
     SmartDashboard.putNumber("Normalized X",xOffset);
-    SmartDashboard.putNumber("Normalized Y",yOffset);
-    SmartDashboard.putNumber("Y Mod",yMod);
-    SmartDashboard.putNumber("X Mod",xMod);
-
-    SmartDashboard.putNumber("Object Y",centerY);
-
-    SmartDashboard.putNumber("Object X",centerX);
+    SmartDashboard.putNumber("Final X Adjustment",xFinal);
+    SmartDashboard.putNumber("Object Raw Y",rawObjectY);
+    SmartDashboard.putNumber("Object Raw X",rawObjectX);
     // SmartDashboard.putNumber("threeWay1",config.controllerButton("threeWay1"));
     // SmartDashboard.putNumber("threeWay2",config.controllerButton("threeWay2"));
     // SmartDashboard.putNumber("twoWay1",config.controllerButton("twoWay1"));
@@ -262,10 +237,6 @@ double centerX;
     // SmartDashboard.putNumber("topB2",config.controllerButton("topB2"));
     // SmartDashboard.putNumber("backB1",config.controllerButton("backB1"));
     // SmartDashboard.putNumber("backB2",config.controllerButton("backB2"));
-    
-  }@Override
-    public void testInit() {}@Override
-    public void testPeriodic() {
     // double p = SmartDashboard.getNumber("P Gain", 0);
     // double i = SmartDashboard.getNumber("I Gain", 0);
     // double d = SmartDashboard.getNumber("D Gain", 0);
@@ -284,13 +255,17 @@ double centerX;
     //   kMinOutput = min; kMaxOutput = max; 
     // }
 
-    SmartDashboard.putNumber("P Gain", kP);
-    SmartDashboard.putNumber("I Gain", kI);
-    SmartDashboard.putNumber("D Gain", kD);
-    SmartDashboard.putNumber("I Zone", kIz);
-    SmartDashboard.putNumber("Feed Forward", kFF);
-    SmartDashboard.putNumber("Max Output", kMaxOutput);
-    SmartDashboard.putNumber("Min Output", kMinOutput);
+    // SmartDashboard.putNumber("P Gain", kP);
+    // SmartDashboard.putNumber("I Gain", kI);
+    // SmartDashboard.putNumber("D Gain", kD);
+    // SmartDashboard.putNumber("I Zone", kIz);
+    // SmartDashboard.putNumber("Feed Forward", kFF);
+    // SmartDashboard.putNumber("Max Output", kMaxOutput);
+    // SmartDashboard.putNumber("Min Output", kMinOutput);
+  }@Override
+    public void testInit() {}@Override
+    public void testPeriodic() {
+
     }
 }
 
