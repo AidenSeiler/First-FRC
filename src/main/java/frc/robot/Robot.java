@@ -17,6 +17,13 @@ import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 //importPID
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANSparkMax;
@@ -30,15 +37,21 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 public class Robot extends TimedRobot {
-  Thread m_visionThread;
 
+NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+NetworkTableEntry tx = table.getEntry("tx");
+NetworkTableEntry ty = table.getEntry("ty");
+NetworkTableEntry ta = table.getEntry("ta");
 
- 
+//read values periodically
+double x = tx.getDouble(0.0);
+double y = ty.getDouble(0.0);
+double area = ta.getDouble(0.0);
+  
+  
+Thread m_visionThread;
 
-
-
-
-  Funk config = new Funk();
+Funk config = new Funk();
 //CAN DEVICES
   PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
   Compressor comp = new Compressor(1, PneumaticsModuleType.REVPH);
@@ -71,10 +84,10 @@ public class Robot extends TimedRobot {
   
 
 //VISION_STOFF
-  int imageHeight = 480;
-  int imageWidth = 640;  
-  double xOffset;
-  double xRange;
+  // int imageHeight = 480;
+  // int imageWidth = 640;  
+  // double xOffset;
+  // double xRange;
 
   //PID
   PIDController pid = new PIDController(1, 0, 0);
@@ -92,20 +105,20 @@ double rawObjectX;
   @Override
   public void robotInit() {
 
-    UsbCamera camera = CameraServer.startAutomaticCapture();
-    camera.setResolution(imageWidth, imageHeight);
-   Object imgLock = new Object();
-    visionThread = new VisionThread(camera, new GripPipeline(), pipeline -> {
-      if (!pipeline.filterContoursOutput().isEmpty()) {
-          Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-          synchronized (imgLock) {
-               rawObjectX = r.x + (r.width / 2);
-               rawObjectY = r.y + (r.height / 2);
+  //   UsbCamera camera = CameraServer.startAutomaticCapture();
+  //   camera.setResolution(imageWidth, imageHeight);
+  //  Object imgLock = new Object();
+  //   visionThread = new VisionThread(camera, new GripPipeline(), pipeline -> {
+  //     if (!pipeline.filterContoursOutput().isEmpty()) {
+  //         Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+  //         synchronized (imgLock) {
+  //              rawObjectX = r.x + (r.width / 2);
+  //              rawObjectY = r.y + (r.height / 2);
 
-          }
-      }
-  });
-  visionThread.start();
+  //         }
+  //     }
+  // });
+  // visionThread.start();
 
   m_visionThread =
   new Thread(
@@ -182,7 +195,7 @@ m_visionThread.start();
 
 
   public void teleopPeriodic() {
-    xOffset = (rawObjectX - (imageWidth/2))/(imageWidth/2);
+   // xOffset = (rawObjectX - (imageWidth/2))/(imageWidth/2);
     totalCurrent = powerPanel.getTotalCurrent();
 
 
@@ -224,7 +237,7 @@ if(config.controllerButton("topB2") == 1){
     SmartDashboard.putNumber("Total Current", totalCurrent);
     SmartDashboard.putNumber("pot1",config.controllerAxis("pot1"));
     SmartDashboard.putNumber("pot2",config.controllerAxis("pot2"));
-    SmartDashboard.putNumber("Normalized X",xOffset);
+   // SmartDashboard.putNumber("Normalized X",xOffset);
     SmartDashboard.putNumber("Final X Adjustment",xFinal);
     SmartDashboard.putNumber("Object Raw Y",rawObjectY);
     SmartDashboard.putNumber("Object Raw X",rawObjectX);
