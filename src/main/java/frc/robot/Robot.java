@@ -38,7 +38,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 public class Robot extends TimedRobot {
 
-NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 NetworkTableEntry tx = table.getEntry("tx");
 NetworkTableEntry ty = table.getEntry("ty");
 NetworkTableEntry ta = table.getEntry("ta");
@@ -105,33 +105,7 @@ double rawObjectX;
   @Override
   
 public void robotInit() {
-
-  float Kp = -0.1f;
-float min_command = 0.05f;
-
-std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
-float tx = table->GetNumber("tx");
-
-if (Joystick->GetRawButton(5))
-{
-        float heading_error = -tx;
-        float steering_adjust = 0.0f;
-if (Math.abs(heading_error) > 1.0)
-        {
-                if (heading_error < 0)
-                {
-                        steering_adjust = Kp*heading_error + min_command;
-                }
-                else
-                {
-                        steering_adjust = Kp*heading_error - min_command;
-                }
-        }
-        left_command += steering_adjust;
-        right_command -= steering_adjust;
-}
-  
-  //PID INIT
+ //PID INIT
     leftDrivePID = left1.getPIDController();
     leftEncoder = left1.getEncoder();
     rightDrivePID = right1.getPIDController();
