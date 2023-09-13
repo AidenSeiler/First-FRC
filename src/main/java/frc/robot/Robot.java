@@ -103,50 +103,35 @@ double rawObjectX;
 
 
   @Override
-  public void robotInit() {
+  
+public void robotInit() {
 
-  //   UsbCamera camera = CameraServer.startAutomaticCapture();
-  //   camera.setResolution(imageWidth, imageHeight);
-  //  Object imgLock = new Object();
-  //   visionThread = new VisionThread(camera, new GripPipeline(), pipeline -> {
-  //     if (!pipeline.filterContoursOutput().isEmpty()) {
-  //         Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-  //         synchronized (imgLock) {
-  //              rawObjectX = r.x + (r.width / 2);
-  //              rawObjectY = r.y + (r.height / 2);
+  float Kp = -0.1f;
+float min_command = 0.05f;
 
-  //         }
-  //     }
-  // });
-  // visionThread.start();
+std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
+float tx = table->GetNumber("tx");
 
-  m_visionThread =
-  new Thread(
-      () -> {
-        CvSink cvSink = CameraServer.getVideo();
-        CvSource outputStream = CameraServer.putVideo("Rectangle", 640, 480);
-        Mat mat = new Mat();
-        while (!Thread.interrupted()) {
-          if (cvSink.grabFrame(mat) == 0) {
-            outputStream.notifyError(cvSink.getError());
-            continue;
-          }
-          Imgproc.circle(
-              mat, new Point(rawObjectX, rawObjectY), 10, new Scalar(0, 255, 0), 5);
-
-          // Give the output stream a new image to display
-
-          outputStream.putFrame(mat);
-
+if (Joystick->GetRawButton(5))
+{
+        float heading_error = -tx;
+        float steering_adjust = 0.0f;
+if (Math.abs(heading_error) > 1.0)
+        {
+                if (heading_error < 0)
+                {
+                        steering_adjust = Kp*heading_error + min_command;
+                }
+                else
+                {
+                        steering_adjust = Kp*heading_error - min_command;
+                }
         }
-
-      });
-
-m_visionThread.setDaemon(true);
-
-m_visionThread.start();
-
-//PID INIT
+        left_command += steering_adjust;
+        right_command -= steering_adjust;
+}
+  
+  //PID INIT
     leftDrivePID = left1.getPIDController();
     leftEncoder = left1.getEncoder();
     rightDrivePID = right1.getPIDController();
@@ -190,7 +175,7 @@ m_visionThread.start();
    
 
     //CONTROLLER SELECTION
-    config.controllerSet("Zorro");
+    config.controllerSet("Joystick");
   }@Override
 
 
