@@ -7,13 +7,11 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.util.Limelight;
 //import com.revrobotics.CANSparkMax;
 //import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 //import Vision
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.CvSink;
-import edu.wpi.first.cscore.CvSource;
-import edu.wpi.first.cscore.UsbCamera;
+
 import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.LinearFilter;
@@ -21,9 +19,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
+
 //importPID
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANSparkMax;
@@ -31,14 +27,10 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 //import Camera Mask
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
+
 public class Robot extends TimedRobot {
 
-  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 NetworkTableEntry tx = table.getEntry("tx");
 NetworkTableEntry ty = table.getEntry("ty");
 NetworkTableEntry ta = table.getEntry("ta");
@@ -50,7 +42,7 @@ double area = ta.getDouble(0.0);
   
   
 Thread m_visionThread;
-
+Limelight util = new Limelight();
 Funk config = new Funk();
 //CAN DEVICES
   PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
@@ -96,7 +88,7 @@ Funk config = new Funk();
   LinearFilter xfilter = LinearFilter.singlePoleIIR(0.1, 0.02);
   LinearFilter yfilter = LinearFilter.singlePoleIIR(0.1, 0.02);
 
-  double rawObjectY;
+double rawObjectY;
 double xFinal;
 double yFinal;
 double rawObjectX;
