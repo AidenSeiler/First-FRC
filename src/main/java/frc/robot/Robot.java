@@ -138,16 +138,36 @@ public void robotInit() {
 
   public void teleopInit() {
     //CAMERA SETTINGS
-   
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+    NetworkTableEntry tx = table.getEntry("tx");
+    NetworkTableEntry ty = table.getEntry("ty");
+    NetworkTableEntry ta = table.getEntry("ta");
+    NetworkTableEntry tv = table.getEntry("tv");
+
+    //read values periodically
+
 
     //CONTROLLER SELECTION
-    config.controllerSet("Joystick");
+    config.controllerSet("Zorro");
   }@Override
 
 
   public void teleopPeriodic() {
    // xOffset = (rawObjectX - (imageWidth/2))/(imageWidth/2);
     totalCurrent = powerPanel.getTotalCurrent();
+    double xCamera = tx.getDouble(0.0);
+    double yCamera = ty.getDouble(0.0);
+    double objectPresent = tv.getDouble(0.0);
+
+    double area = ta.getDouble(0.0);
+if()
+    if (xCamera > 0.1){
+   xFinal = (xCamera/94) + 0.08;
+}
+if (xCamera < 0.1){
+   xFinal = -(xCamera/94) - 0.08;
+}
+else{xFinal = 0;}
 
 
 
@@ -159,12 +179,14 @@ if(config.controllerButton("topB2") == 1){
     //DROBING
     turn = config.deadzone(config.controllerAxis("x1"))+xFinal;
     throttle = -config.controllerAxis("y2");
-    double setPointLeft = (-throttle+turn)*maxRPM;
-   leftDrivePID.setReference(setPointLeft, CANSparkMax.ControlType.kVelocity);
-    double setPointRight = (throttle+turn)*maxRPM;
-    rightDrivePID.setReference(setPointRight, CANSparkMax.ControlType.kVelocity);
-    //left2.set(-throttle+turn);
-    //right2.set(throttle+turn);
+  //   double setPointLeft = (-throttle+turn)*maxRPM;
+  //  leftDrivePID.setReference(setPointLeft, CANSparkMax.ControlType.kVelocity);
+  //   double setPointRight = (throttle+turn)*maxRPM;
+  //   rightDrivePID.setReference(setPointRight, CANSparkMax.ControlType.kVelocity);
+    left1.set(-throttle+turn);
+    right1.set(throttle+turn);
+    left2.set(-throttle+turn);
+    right2.set(throttle+turn);
 
 //SOLENOID ACTUATION
     if (config.controllerButton("twoWay1") == 1){
@@ -190,8 +212,9 @@ if(config.controllerButton("topB2") == 1){
     SmartDashboard.putNumber("pot2",config.controllerAxis("pot2"));
    // SmartDashboard.putNumber("Normalized X",xOffset);
     SmartDashboard.putNumber("Final X Adjustment",xFinal);
-    SmartDashboard.putNumber("Object Raw Y",rawObjectY);
-    SmartDashboard.putNumber("Object Raw X",rawObjectX);
+
+    SmartDashboard.putNumber("Object Raw X",xCamera);
+
     // SmartDashboard.putNumber("threeWay1",config.controllerButton("threeWay1"));
     // SmartDashboard.putNumber("threeWay2",config.controllerButton("threeWay2"));
     // SmartDashboard.putNumber("twoWay1",config.controllerButton("twoWay1"));
