@@ -142,8 +142,6 @@ public void robotInit() {
     NetworkTableEntry tx = table.getEntry("tx");
     NetworkTableEntry ty = table.getEntry("ty");
     NetworkTableEntry ta = table.getEntry("ta");
-    NetworkTableEntry tv = table.getEntry("tv");
-
     //read values periodically
 
 
@@ -157,19 +155,18 @@ public void robotInit() {
     totalCurrent = powerPanel.getTotalCurrent();
     double xCamera = tx.getDouble(0.0);
     double yCamera = ty.getDouble(0.0);
-    double objectPresent = tv.getDouble(0.0);
 
     double area = ta.getDouble(0.0);
-if()
-    if (xCamera > 0.1){
-   xFinal = (xCamera/94) + 0.08;
-}
-if (xCamera < 0.1){
-   xFinal = -(xCamera/94) - 0.08;
+if(config.controllerButton("topB1") == 1){
+  if (xCamera > 0.1){
+    xFinal = (xCamera/675) + 0.07;
+  }
+  else if (xCamera < -0.1){
+    xFinal = (xCamera/675) - 0.07;
+  }
+  else{xFinal = 0;}
 }
 else{xFinal = 0;}
-
-
 
 if(config.controllerButton("topB2") == 1){
  if(true){
@@ -211,7 +208,7 @@ if(config.controllerButton("topB2") == 1){
     SmartDashboard.putNumber("pot1",config.controllerAxis("pot1"));
     SmartDashboard.putNumber("pot2",config.controllerAxis("pot2"));
    // SmartDashboard.putNumber("Normalized X",xOffset);
-    SmartDashboard.putNumber("Final X Adjustment",xFinal);
+    SmartDashboard.putNumber("Final X",xFinal);
 
     SmartDashboard.putNumber("Object Raw X",xCamera);
 
