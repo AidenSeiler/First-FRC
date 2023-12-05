@@ -111,7 +111,7 @@ public void robotInit() {
     kFF = 0.000015; 
     kMaxOutput = 1; 
     kMinOutput = -1;
-    maxRPM = 6000;
+    maxRPM = 10000;
 
     leftDrivePID.setP(kP);
     leftDrivePID.setI(kI);
@@ -193,7 +193,7 @@ if(config.controllerButton("topB2") == 1){
       testSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 //COMPRESSOR ON/OFF
-    if (config.controllerButton("twoWay2") == 1){
+    if (config.controllerButton("twoWay2") == 0){
       comp.disable();
     } 
     else{
