@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Funk {
+PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
 
 //DECLARE
 int controllerType;
@@ -24,9 +25,11 @@ boolean out;
 
 
 final GenericHID stick = new GenericHID(0);
-PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
 
-
+public double totalCurrent(){
+    double tC = powerPanel.getTotalCurrent();
+    return tC;
+}
     public void controllerSet(String cont){
         if (cont == "Zorro"){
             controllerType = 0;
@@ -37,7 +40,7 @@ PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
     }
 
     public double deadzone(double input){
-        if (Math.abs(input) > 0.0){
+        if (Math.abs(input) > 0.01){
             return input;
         }
         else{
@@ -111,9 +114,9 @@ PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
         return(weightedTurn);
     }
     public void BatteryPercent() {
-        double[] voltages = new double[200];
+        double[] voltages = new double[5000];
         double sum = 0;
-        for(int i = 0;i < 200; i++) {
+        for(int i = 0;i < 5000; i++) {
             voltages[i] = powerPanel.getVoltage();  
         }
         for (int i = 0; i < voltages.length; i++) {
@@ -121,7 +124,7 @@ PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
         }   
         double averageVoltage = sum/voltages.length;
         sum = 0;
-        double batteryPercentage = (averageVoltage - 11.5)/1.6;
+        double batteryPercentage = 100*((averageVoltage - 10)/3.6);
         SmartDashboard.putNumber("Average Voltage", averageVoltage);
         SmartDashboard.putNumber("Battery Percentage", batteryPercentage);
 

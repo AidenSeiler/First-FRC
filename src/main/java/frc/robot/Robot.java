@@ -55,7 +55,6 @@ Thread m_visionThread;
 Limelight util = new Limelight();
 Funk config = new Funk();
 //CAN DEVICES
-  PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
   Compressor comp = new Compressor(1, PneumaticsModuleType.REVPH);
   DoubleSolenoid testSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.REVPH, 0, 1);  
 
@@ -166,7 +165,8 @@ public void robotInit() {
   
   public void teleopPeriodic() {
    // xOffset = (rawObjectX - (imageWidth/2))/(imageWidth/2);
-    totalCurrent = powerPanel.getTotalCurrent();
+   config.BatteryPercent();
+    totalCurrent = config.totalCurrent();
     double xCamera = tx.getDouble(0.0);
     double yCamera = ty.getDouble(0.0);
 
@@ -225,7 +225,6 @@ if(config.controllerButton("topB2") == 1){
     SmartDashboard.putNumber("Final X",xFinal);
 
     SmartDashboard.putNumber("Object Raw X",xCamera);
-    SmartDashboard.putNumber("Battery",xCamera);
 
     // SmartDashboard.putNumber("threeWay1",config.controllerButton("threeWay1"));
     // SmartDashboard.putNumber("threeWay2",config.controllerButton("threeWay2"));
