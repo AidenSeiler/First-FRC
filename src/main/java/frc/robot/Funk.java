@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj.GenericHID;
 //import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import com.revrobotics.CANSparkMax;
 //import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Funk {
@@ -21,6 +24,7 @@ boolean out;
 
 
 final GenericHID stick = new GenericHID(0);
+PowerDistribution powerPanel = new PowerDistribution(1, ModuleType.kRev);
 
 
     public void controllerSet(String cont){
@@ -106,5 +110,21 @@ final GenericHID stick = new GenericHID(0);
         double weightedTurn = input*(1-(Math.abs(controllerAxis("y1")*0.5)));
         return(weightedTurn);
     }
+    public void BatteryPercent() {
+        double[] voltages = new double[200];
+        double sum = 0;
+        for(int i = 0;i < 200; i++) {
+            voltages[i] = powerPanel.getVoltage();  
+        }
+        for (int i = 0; i < voltages.length; i++) {
+            sum += voltages[i];
+        }   
+        double averageVoltage = sum/voltages.length;
+        sum = 0;
+        double batteryPercentage = (averageVoltage - 11.5)/1.6;
+        SmartDashboard.putNumber("Average Voltage", averageVoltage);
+        SmartDashboard.putNumber("Battery Percentage", batteryPercentage);
+
+        }
          
 }

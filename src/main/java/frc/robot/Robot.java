@@ -83,8 +83,6 @@ Funk config = new Funk();
   double power = 1;
   double maxCurrent = 100;
 
-  double[] voltages = new double[20];
-  double sum;
 
 //VISION_STOFF
   // int imageHeight = 480;
@@ -161,20 +159,9 @@ public void robotInit() {
   }@Override
 
 
-public void BatteryPercent(){
-    for(int i = 0;;) {
-      voltages[i] = m_pdp.getVoltage();
-      if (i < 20) {i++;} else {i = 0;}
-      wait(500);
-    }
-    for (int i = 0; i < voltages.length; i++) {
-      sum += voltages[i];
-    }   
-    double averageVoltage = sum/voltages.length;
-    sum = 0;
-    double batteryEstimate = (averageVoltage - 11.5)/1.6;
-    }
-}
+
+  
+
 
   
   public void teleopPeriodic() {
@@ -238,6 +225,7 @@ if(config.controllerButton("topB2") == 1){
     SmartDashboard.putNumber("Final X",xFinal);
 
     SmartDashboard.putNumber("Object Raw X",xCamera);
+    SmartDashboard.putNumber("Battery",xCamera);
 
     // SmartDashboard.putNumber("threeWay1",config.controllerButton("threeWay1"));
     // SmartDashboard.putNumber("threeWay2",config.controllerButton("threeWay2"));

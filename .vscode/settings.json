@@ -27,6 +27,8 @@
   ],
   "java.test.defaultConfig": "WPIlibUnitTests",
   "editor.fontSize": 18,
-  "editor.fontFamily": "JetBrains Mono, , 'Courier New', monospace",
-  "workbench.colorTheme": "Default High Contrast"
+  "editor.fontFamily": "Consolas, 'Courier New', monospace",
+  "workbench.colorTheme": "Monokai",
+  "editor.fontLigatures": true,
+  "editor.fontWeight": "600"
 }
