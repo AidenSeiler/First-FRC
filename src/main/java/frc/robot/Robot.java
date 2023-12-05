@@ -35,6 +35,16 @@ NetworkTableEntry tx = table.getEntry("tx");
 NetworkTableEntry ty = table.getEntry("ty");
 NetworkTableEntry ta = table.getEntry("ta");
 
+
+
+
+
+ 
+
+
+
+
+  
 //read values periodically
 double x = tx.getDouble(0.0);
 double y = ty.getDouble(0.0);
@@ -73,7 +83,8 @@ Funk config = new Funk();
   double power = 1;
   double maxCurrent = 100;
 
-  
+  double[] voltages = new double[20];
+  double sum;
 
 //VISION_STOFF
   // int imageHeight = 480;
@@ -150,6 +161,22 @@ public void robotInit() {
   }@Override
 
 
+public void BatteryPercent(){
+    for(int i = 0;;) {
+      voltages[i] = m_pdp.getVoltage();
+      if (i < 20) {i++;} else {i = 0;}
+      wait(500);
+    }
+    for (int i = 0; i < voltages.length; i++) {
+      sum += voltages[i];
+    }   
+    double averageVoltage = sum/voltages.length;
+    sum = 0;
+    double batteryEstimate = (averageVoltage - 11.5)/1.6;
+    }
+}
+
+  
   public void teleopPeriodic() {
    // xOffset = (rawObjectX - (imageWidth/2))/(imageWidth/2);
     totalCurrent = powerPanel.getTotalCurrent();
